@@ -1,0 +1,62 @@
+:root {
+  --primary: #008080;
+  --primary-light: #4db3b3;
+  --primary-dark: #005959;
+  --bg-color: #f4faf9;
+  --text-main: #333333;
+  --text-light: #666666;
+  --white: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(0, 128, 128, 0.1);
+  --shadow-md: 0 4px 12px rgba(0, 128, 128, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 128, 128, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bloom {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  50% { transform: scale(1.1) rotate(10deg); opacity: 0.8; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-bloom {
+  animation: bloom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}

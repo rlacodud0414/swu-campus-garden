@@ -1,0 +1,418 @@
+.campus-map-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #faf7ed; /* 따뜻하고 화사한 샌드/아이보리 배경색 일치 */
+  transition: background-color 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.map-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+}
+
+.building-marker {
+  position: absolute;
+  transform: translate(-50%, -50%); /* 중심점 정렬 */
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.2s ease, z-index 0.2s;
+}
+
+.building-marker:hover {
+  z-index: 50 !important;
+}
+
+/* 검색 시 하이라이트 활성화 애니메이션 */
+.building-marker.is-highlighted {
+  animation: marker-bounce 0.8s infinite alternate ease-in-out;
+  z-index: 100 !important;
+}
+
+.building-marker.is-highlighted::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid var(--primary);
+  transform: translate(-50%, -50%) scale(0.5);
+  animation: pulse-ring 1.5s infinite cubic-bezier(0.215, 0.610, 0.355, 1);
+  pointer-events: none;
+  box-shadow: 0 0 15px rgba(0, 196, 255, 0.6);
+}
+
+@keyframes marker-bounce {
+  0% { transform: translate(-50%, -50%) translateY(0); }
+  100% { transform: translate(-50%, -50%) translateY(-18px); }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.building-marker.is-blooming {
+  transform: translate(-50%, -50%) scale(2.2) !important;
+  z-index: 150 !important;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 플로팅 줌 컨트롤 스타일 (유리 패널 디자인 테코) */
+.zoom-controls {
+  position: absolute;
+  bottom: 120px;
+  right: 42px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 196, 255, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 128, 128, 0.12);
+  z-index: 80;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.zoom-controls:hover {
+  box-shadow: 0 12px 40px rgba(0, 128, 128, 0.2);
+  border-color: rgba(0, 196, 255, 0.3);
+}
+
+.zoom-btn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: var(--primary-dark);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, color 0.2s, transform 0.1s;
+  outline: none;
+}
+
+.zoom-btn:hover {
+  background-color: rgba(0, 196, 255, 0.08);
+}
+
+.zoom-btn:active {
+  transform: scale(0.92);
+}
+
+.zoom-divider {
+  height: 1px;
+  background-color: rgba(0, 128, 128, 0.1);
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* 중앙도서관 등 위치안내 전용 비나눔 레퍼런스 핀 스타일 */
+.building-marker.reference-marker {
+  z-index: 4; /* 나눔용 꽃핀보다 뒤에 배치 */
+}
+
+.reference-pin-graphic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #546e7a;
+  color: #546e7a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.building-marker.reference-marker:hover .reference-pin-graphic {
+  background: #546e7a;
+  color: #ffffff;
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 6px 16px rgba(84, 110, 122, 0.3);
+}
+
+.reference-building-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background-color: #546e7a;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.building-marker.reference-marker:hover .reference-building-label {
+  background-color: #37474f;
+  transform: translateX(-50%) translateY(6px) scale(1.05);
+}
+
+/* 나눔 카테고리 필터 칩스 (top-left) */
+.filter-chips-overlay {
+  position: absolute;
+  top: 104px; /* 검색 바 하단 배치 (기본 - 태블릿/모바일) */
+  left: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(26, 188, 156, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 100, 100, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 데스크탑 화면: 상단 검색바와 나란히 일렬 정렬 및 좌측 배치 */
+@media (min-width: 1150px) {
+  .filter-chips-overlay {
+    top: 27px; /* 검색바 세로 중앙 정렬 수치 */
+    left: 40px; /* 좌측 여백 확장 */
+    background: rgba(255, 255, 255, 0.85); /* 데스크탑 전용 고대비 고품격 패널 */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(0, 128, 128, 0.1);
+  }
+}
+
+.filter-chip {
+  background: transparent;
+  border: none;
+  color: #546e7a;
+  padding: 6px 14px;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  outline: none;
+}
+
+.filter-chip:hover {
+  background: rgba(26, 188, 156, 0.05);
+  color: #16a085;
+}
+
+.filter-chip.active {
+  background: #1abc9c;
+  color: white;
+  box-shadow: 0 3px 10px rgba(26, 188, 156, 0.25);
+}
+
+/* 어드밴스드 테마 & 도감 콘솔 (top-right) */
+.advanced-console-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.console-section {
+  display: flex;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 4px;
+  box-shadow: 0 8px 24px rgba(0, 70, 70, 0.06);
+}
+
+.console-btn {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #546e7a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  outline: none;
+  font-weight: 800;
+}
+
+.console-btn:hover {
+  background: rgba(0,0,0,0.04);
+  color: #2c3e50;
+}
+
+.console-btn.active {
+  background: #1abc9c;
+  color: white;
+}
+
+.theme-controller .console-btn.active {
+  background: #f5b041; /* 해가 뜨고 달이 지는 오렌지골드 활성색 */
+  color: white;
+  box-shadow: 0 3px 10px rgba(245, 176, 65, 0.35);
+}
+
+/* 벚꽃 비 & 도감 텍스트 버튼 스타일 */
+.petal-toggle, .garden-log-btn {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 38px;
+  width: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: #2c3e50;
+  box-shadow: 0 8px 24px rgba(0, 70, 70, 0.06);
+}
+
+.petal-toggle.active {
+  background: #ffb7b2;
+  color: white;
+  border-color: #ffb7b2;
+  box-shadow: 0 4px 12px rgba(255, 183, 178, 0.35);
+}
+
+.garden-log-btn {
+  background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 6px 16px rgba(26, 188, 156, 0.2);
+  cursor: pointer;
+}
+
+.garden-log-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(26, 188, 156, 0.3);
+}
+
+.petal-toggle span, .garden-log-btn span {
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+/* 흩날리는 벚꽃 비 샤워 컨테이너 */
+.map-petals-shower-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 70;
+}
+
+.drifting-blossom-petal {
+  position: absolute;
+  top: -20px;
+  width: 16px;
+  height: 11px;
+  background-color: #ffb7b2;
+  border-radius: 50% 0 50% 50%;
+  animation: drift-fall 8s infinite linear;
+}
+
+.drifting-blossom-petal:nth-child(2n) {
+  background-color: #ffccd5;
+  border-radius: 0 50% 50% 50%;
+}
+
+.drifting-blossom-petal:nth-child(3n) {
+  background-color: #ffb3c6;
+}
+
+@keyframes drift-fall {
+  0% {
+    top: -20px;
+    transform: translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(80px) rotate(180deg);
+  }
+  100% {
+    top: 105%;
+    transform: translateX(180px) rotate(360deg);
+  }
+}
+
+/* 시간대별 감성 테마에 따른 기단 및 지붕 오버레이 글라스 이펙트 */
+.campus-map-container.theme-sunset {
+  background-color: #f8cbad !important;
+}
+
+.campus-map-container.theme-night {
+  background-color: #1a252f !important;
+}
+
+/* 노을/밤 테마 시 건물 유리창 자동 백그라운드 발광 CSS 속성 셀렉터 (극적인 비주얼 완성도!) */
+.theme-sunset rect[fill="#ebf5fb"],
+.theme-sunset rect[fill="#ebfaf5"],
+.theme-sunset rect[fill="#eaf2f8"],
+.theme-sunset path[fill="#ebf5fb"],
+.theme-sunset path[fill="#ebfaf5"],
+.theme-sunset rect[fill="#e8f8f5"],
+.theme-sunset rect[fill="#d6eaf8"],
+.theme-sunset rect[fill="#eafbf7"],
+.theme-sunset circle[fill="#fff"],
+.theme-sunset ellipse[fill="#fff"],
+.theme-night rect[fill="#ebf5fb"],
+.theme-night rect[fill="#ebfaf5"],
+.theme-night rect[fill="#eaf2f8"],
+.theme-night path[fill="#ebf5fb"],
+.theme-night path[fill="#ebfaf5"],
+.theme-night rect[fill="#e8f8f5"],
+.theme-night rect[fill="#d6eaf8"],
+.theme-night rect[fill="#eafbf7"],
+.theme-night circle[fill="#fff"],
+.theme-night ellipse[fill="#fff"] {
+  fill: #ffe066 !important;
+  filter: drop-shadow(0 0 6px rgba(255, 224, 102, 0.95)) !important;
+  transition: fill 0.5s ease, filter 0.5s ease;
+}
+
+/* 밤 테마 일러스트 빌딩 라인 및 도로 가시성 튜닝 */
+.theme-night path[stroke="#ebdcc5"] {
+  stroke: #2c3e50 !important;
+}
+.theme-night path[stroke="#ffffff"] {
+  stroke: #34495e !important;
+}

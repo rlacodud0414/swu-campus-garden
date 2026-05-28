@@ -1,0 +1,135 @@
+.flower-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.flower-pin.is-preview {
+  margin: 1rem 0;
+  pointer-events: none;
+}
+
+/* 흩뿌려진 작은 꽃들을 위한 컨테이너 */
+.scattered-flowers {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.flower-pin.is-preview .scattered-flowers {
+  width: 100px;
+  height: 100px;
+}
+
+.scattered-flower {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+}
+
+.flower-graphic {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 2;
+}
+
+.flower-pin:not(.is-preview):hover .flower-graphic {
+  transform: scale(1.1) translateY(-6px);
+}
+
+/* 화악 피어나는 폭발적인 모션 (미리보기 용) */
+.dramatic-bloom .flower-graphic {
+  animation: dramatic-pop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes dramatic-pop {
+  0% { transform: scale(0) rotate(-45deg); filter: blur(5px) brightness(2); }
+  50% { transform: scale(1.3) rotate(15deg); filter: blur(0px) brightness(1.3); }
+  75% { transform: scale(0.95) rotate(-5deg); }
+  100% { transform: scale(1) rotate(0deg); filter: blur(0px) brightness(1); }
+}
+
+@keyframes pop-in {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  80% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.flower-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  font-weight: 900;
+  font-size: 0.75rem;
+  z-index: 10;
+  pointer-events: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  border: 1.5px solid white;
+}
+
+.building-label {
+  margin-top: 6px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  pointer-events: none;
+  border-width: 1.5px;
+  border-style: solid;
+  z-index: 3;
+}
+
+@keyframes pulse-aura {
+  0% { transform: scale(0.9); opacity: 0.4; }
+  50% { transform: scale(1.2); opacity: 0.8; filter: brightness(1.5); }
+  100% { transform: scale(0.9); opacity: 0.4; }
+}
+
+.pulse-aura {
+  animation: pulse-aura 3s infinite ease-in-out;
+  transform-origin: center;
+}
+
+@keyframes bloom-spin {
+  0% { transform: scale(0) rotate(-60deg); opacity: 0; }
+  60% { transform: scale(1.1) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.animate-bloom-spin {
+  animation: bloom-spin 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transform-origin: center;
+}
+
+@keyframes float-heavy {
+  0% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(2deg); }
+  66% { transform: translateY(4px) rotate(-2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float-heavy 6s ease-in-out infinite;
+}
